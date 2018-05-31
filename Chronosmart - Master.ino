@@ -1,11 +1,9 @@
 #include <f401reMap.h>
 #include <SPI.h>   
 
-
 HardwareSerial mySerial(USART6);
 
 #define ledPin pinMap(12)
-#define BUTTON pinMap(38)
 
 const int triggerPort1 =  pinMap(10); 
 const int echoPort1 = pinMap(9); 
@@ -14,8 +12,6 @@ int flagA = 0;
 int flagB = 0;
 int flagC = 0;
 int  val = 0; 
-
-int state = 0;
 int iniz = 0;
 int potValue = 0;
 void setup() {
@@ -27,14 +23,15 @@ void setup() {
   mySerial.begin(9600); // Default communication rate of the Bluetooth module
   Serial.begin(9600);
 }
-void loop() {
-  val = digitalRead(BUTTON);
+void loop() 
+{
   
-  if(mySerial.available() > 0){ // Checks whether data is comming from the serial port
-    iniz = mySerial.read(); // Reads the data from the serial port
-  }
-//val==LOW 
-  if (iniz==1){
+  if(mySerial.available() > 0)  // Checks whether data is comming from the serial port
+  {
+  iniz = mySerial.read(); // Reads the data from the serial port
+ } 
+  if (iniz==1)
+  {
     flagA=1;
     flagB=0;
     Serial.println("Starting...");
@@ -42,7 +39,7 @@ void loop() {
   }
 
   
-//flag che attiva il sistema tramite app, il sistema "vede"
+ //flag that activates the system via app, the system "see"
  if (flagA == 1) 
   {  
     
@@ -51,11 +48,11 @@ void loop() {
    delayMicroseconds( 10 );
    digitalWrite( triggerPort1, LOW );
    long durata1 = pulseIn(echoPort1, HIGH );
-Serial.print("distanza: ");
-        Serial.print(durata1 ,DEC);
-         Serial.print("\n");
+   Serial.print("distanza: ");
+   Serial.print(durata1 ,DEC);
+   Serial.print("\n");
    
-   if (durata1 < 1500) // quando il sensore vede inizialmente 
+   if (durata1 < 8000) 
    {
       Serial.println("I detect, when I stop detecting, the chronometer starts");
       Serial.println("\n");
@@ -80,7 +77,6 @@ Serial.print("distanza: ");
         {
           digitalWrite(led1, LOW);
           mySerial.write(1);
-          state=1;
           Serial.print("partito");
           Serial.print("\n");
           
@@ -93,10 +89,6 @@ Serial.print("distanza: ");
       }
    }
   }
-  if(mySerial.available() > 0){ // Checks whether data is comming from the serial port
-    state = mySerial.read(); // Reads the data from the serial port
-     Serial.println("state:");
-    Serial.println(state);
-          } 
+  
  
 }
