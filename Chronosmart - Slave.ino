@@ -3,9 +3,9 @@
 #define RedLed pinMap(3)
 #define YellowLed pinMap(4)
 
-HardwareSerial mySerial(USART6); // riceve dal master
+HardwareSerial mySerial(USART6); // rreceives from the master
 
-HardwareSerial mySerial2(USART1); //manda all'app 
+HardwareSerial mySerial2(USART1); //send to the app
 
 int accensione=0;
 const int triggerPort1 =  pinMap(10); 
@@ -20,48 +20,23 @@ float tempoF;
 float tempo;
 unsigned int var = 0;
 unsigned int var2 = 0;
+
 void setup() 
-{
-     
+{    
   pinMode(triggerPort1, OUTPUT);
   pinMode(echoPort1, INPUT);
   Serial.begin(9600);
   mySerial2.begin(9600);
-  mySerial.begin(9600); // Default communication rate of the Bluetooth module
+  mySerial.begin(9600);
   pinMode(13, OUTPUT);
   pinMode(RedLed, OUTPUT);
   pinMode(YellowLed, OUTPUT);
-  
 }
 
 void loop() 
 {
-/*Codice per APP*/
-
+  /*------------------------------ App code to send the turn on signal ------------------------------------------------- */
  
- 
-/*if (mySerial2.available() > 0) 
-{  // if the data came
-    incomingByte = mySerial2.read(); // read byte
-    Serial.println("Incoming byte contiene: ");
-    Serial.print(incomingByte);
-    Serial.println("\n");
-    if(incomingByte == '0') {
-       digitalWrite(13, LOW);  // if 1, switch LED Off
-       mySerial2.println("LED OFF. Press 1 to LED ON!");  // print message
-    }
-    if(incomingByte == '1') {
-       digitalWrite(13, HIGH); // if 0, switch LED on
-       mySerial2.println("LED ON. Press 0 to LED OFF!");
-    }
-  }
-
-   digitalWrite( triggerPort1, LOW );
-   digitalWrite( triggerPort1, HIGH );
-   delayMicroseconds( 10 );
-   digitalWrite( triggerPort1, LOW );
-   long durata1 = pulseIn(echoPort1, HIGH );
-  */ 
   if (mySerial2.available() > 0)
   {
     accensione = mySerial2.read();
@@ -71,7 +46,8 @@ void loop()
     } 
   }
 
-  
+  /*------------------------------- Comunication with the other board and time calculation ------------------------------- */
+     
  if(mySerial.available() > 0)
  {
     state = mySerial.read(); // Reads the data from the serial port
@@ -95,7 +71,7 @@ void loop()
    delayMicroseconds( 10 );
    digitalWrite( triggerPort1, LOW );
    long durata1 = pulseIn(echoPort1, HIGH );  
-   if (durata1 < 2500)
+   if (durata1 < 8000)
     {
       tempoI = millis();
       tempoF = tempoI/1000;
@@ -103,15 +79,15 @@ void loop()
       Serial.print("IL tempo e': ");
       Serial.println(tempo);
       delay(1000);
-      
-      /*if (mySerial2.available() > 0)
-      {*/
-       char tempo2 = tempo;
+      char tempo2 = tempo;
+        
+     /*----------------------------------- Code to send the time to the App ---------------------------------- */
        mySerial2.println(tempo);
-
       digitalWrite(RedLed, LOW);
       digitalWrite(YellowLed, HIGH);
-      
+  
+       
+      /*----------------------- Code to reset the system ----------------------------------*/
       flagB = 0;
       mySerial.write(0);
       accensione = 0;
