@@ -11,7 +11,6 @@ int accensione=0;
 const int triggerPort1 =  pinMap(10); 
 const int echoPort1 = pinMap(9);
 float tempo_base;
-char incomingByte;
 int state = 0;
 int flagB = 0;
 float tempoBaseSec;
